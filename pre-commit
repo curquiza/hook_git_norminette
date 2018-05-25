@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cached_files=$(git diff --cached --name-only | grep "[.h|.c]$")
+norminette=$(norminette $cached_files)
+
+echo $norminette | grep -q -v 'Error'
+
+if [ $? -ne 0 ] ; then
+	echo 'Commit refused ! Check the norm !'
+	printf '%s\n' "${norminette[@]}" 1>&2
+	exit 1
+else
+	echo 'Commit accepted !'
+	exit 0
+fi
